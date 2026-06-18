@@ -2,6 +2,10 @@
 
 A production-grade collection of DevOps automation modules for building, securing, and scaling modern infrastructure.
 
+<p align="center">
+  <img src="./assets/architecture.png" width="100%">
+</p>
+
 ## 🧠 What this includes
 
 - Linux server hardening & bootstrap automation
