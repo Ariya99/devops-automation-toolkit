@@ -2,6 +2,7 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
+import sys
 
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
@@ -23,8 +24,12 @@ while True:
         print("Invalid filename. Please provide a valid .csv file.")
 
 # Read the data from the CSV files
-df_failed = pd.read_csv(failed_file, delimiter=',')
-df_all = pd.read_csv(all_operations_file, delimiter=',')
+try:
+    df_failed = pd.read_csv(failed_file, delimiter=',')
+    df_all = pd.read_csv(all_operations_file, delimiter=',')
+except Exception as e:
+    print(f"Error: Failed to read input files.")
+    sys.exit(1)
 
 # Merge the dataframes based on the "OPERATION_NAME" column
 merged_df = df_all.merge(df_failed, on="OPERATION_NAME", how="left", suffixes=("_all", "_failed"))
@@ -63,7 +68,11 @@ for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=4, max_col=4):  #
 
 # Save the Excel workbook with the provided file name including the date
 output_file = f"Syncprocess_health_report_{date_input}.xlsx"
-wb.save(output_file)
+try:
+    wb.save(output_file)
+except Exception as e:
+    print(f"Error: Failed to save output file.")
+    sys.exit(1)
 
 # Add a message indicating that the data has been combined and saved to the file
 print("Data combined and saved to file:", output_file)
