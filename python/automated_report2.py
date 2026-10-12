@@ -1,5 +1,6 @@
 import pandas as pd
 from openpyxl.styles import PatternFill
+import sys
 
 # Prompt the user to input the file names for failed, executed, and all status CSV files
 failed_filename = input("Enter the name of the failed operations CSV file: ")
@@ -12,9 +13,13 @@ executed_filename = executed_filename if executed_filename.lower().endswith('.cs
 all_status_filename = all_status_filename if all_status_filename.lower().endswith('.csv') else all_status_filename + '.csv'
 
 # Read the csv files and store them in dataframes
-df_failed = pd.read_csv(failed_filename)
-df_executed = pd.read_csv(executed_filename)
-df_all_status = pd.read_csv(all_status_filename)
+try:
+    df_failed = pd.read_csv(failed_filename)
+    df_executed = pd.read_csv(executed_filename)
+    df_all_status = pd.read_csv(all_status_filename)
+except Exception as e:
+    print(f"Error: Failed to read one or more input files. Please ensure they exist and are readable.")
+    sys.exit(1)
 
 # Concatenate the dataframes vertically
 df_concat = pd.concat([df_failed, df_executed, df_all_status])
@@ -86,4 +91,8 @@ for cell in worksheet[cell_range]:
                 c.fill = green_fill
 
 # Save the workbook
-workbook.save(output_filename)
+try:
+    workbook.save(output_filename)
+except Exception as e:
+    print(f"Error: Failed to save the output file. Please check your permissions and path.")
+    sys.exit(1)
