@@ -37,6 +37,8 @@ merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_
 
 # Get the date input from the user
 date_input = input("Enter the date (e.g., 2oct_10oct): ")
+# Prevent path traversal by extracting just the base filename component
+date_input = os.path.basename(date_input)
 
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
