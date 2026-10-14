@@ -46,9 +46,16 @@ ws = wb.active
 header = ["OPERATION_NAME", "OPERATION_COUNT_all", "OPERATION_COUNT_failed", "Failure Percentage"]
 ws.append(header)
 
+# Security: Sanitize against CSV/Formula Injection before exporting to Excel
+def sanitize_cell(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
-    ws.append(row.tolist())
+    sanitized_row = [sanitize_cell(cell) for cell in row.tolist()]
+    ws.append(sanitized_row)
 
 # Apply conditional formatting based on the "Failure Percentage" column
 for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=4, max_col=4):  # 4 corresponds to the "Failure Percentage" column
