@@ -23,9 +23,16 @@ merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_
 wb = Workbook()
 ws = wb.active
 
+# Security: Sanitize against CSV/Formula Injection before exporting to Excel
+def sanitize_cell(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
-    ws.append(row.tolist())
+    sanitized_row = [sanitize_cell(cell) for cell in row.tolist()]
+    ws.append(sanitized_row)
 
 # Remove the first row that contains "OPERATION_NAME" and "OPERATION_COUNT"
 ws.delete_rows(1)

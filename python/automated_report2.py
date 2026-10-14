@@ -20,7 +20,13 @@ df_all_status = pd.read_csv(all_status_filename)
 df_concat = pd.concat([df_failed, df_executed, df_all_status])
 
 # Create a new dataframe with unique operation names
-df_unique = pd.DataFrame({'Operation_Name': df_concat['OPERATION_NAME'].unique()})
+# Security: Sanitize against CSV/Formula Injection before exporting to Excel
+def sanitize_formula_injection(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
+df_unique = pd.DataFrame({'Operation_Name': df_concat['OPERATION_NAME'].apply(sanitize_formula_injection).unique()})
 
 # Prompt the user to input the output Excel file name
 output_filename = input("Enter the output Excel file name: ")
