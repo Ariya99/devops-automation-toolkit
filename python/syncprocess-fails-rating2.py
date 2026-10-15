@@ -2,6 +2,12 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 
+def sanitize_for_excel(val):
+    if isinstance(val, str) and val and val[0] in ('=', '+', '-', '@', '\t', '\r'):
+        return "'" + val
+    return val
+
+
 # File paths for the two CSV files
 failed_file = "Report-2oct_10oct-Failed.csv"
 all_operations_file = "Report-2oct_10oct-all_operations_status.csv"
@@ -15,6 +21,8 @@ merged_df = df_all.merge(df_failed, on="OPERATION_NAME", how="left", suffixes=("
 
 # Fill missing values in the "OPERATION_COUNT_failed" column with 0
 merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
+
+merged_df['OPERATION_NAME'] = merged_df['OPERATION_NAME'].apply(sanitize_for_excel)
 
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
