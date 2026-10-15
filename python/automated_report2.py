@@ -1,6 +1,12 @@
 import pandas as pd
 from openpyxl.styles import PatternFill
 
+def sanitize_for_excel(val):
+    if isinstance(val, str) and val and val[0] in ('=', '+', '-', '@', '\t', '\r'):
+        return "'" + val
+    return val
+
+
 # Prompt the user to input the file names for failed, executed, and all status CSV files
 failed_filename = input("Enter the name of the failed operations CSV file: ")
 executed_filename = input("Enter the name of the executed operations CSV file: ")
@@ -21,6 +27,7 @@ df_concat = pd.concat([df_failed, df_executed, df_all_status])
 
 # Create a new dataframe with unique operation names
 df_unique = pd.DataFrame({'Operation_Name': df_concat['OPERATION_NAME'].unique()})
+df_unique['Operation_Name'] = df_unique['Operation_Name'].apply(sanitize_for_excel)
 
 # Prompt the user to input the output Excel file name
 output_filename = input("Enter the output Excel file name: ")
