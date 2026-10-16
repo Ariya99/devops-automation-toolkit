@@ -55,6 +55,9 @@ for index, row in df_unique.iterrows():
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
 
+# Sanitize to prevent CSV/Formula injection
+df_unique['Operation_Name'] = df_unique['Operation_Name'].apply(lambda x: f"'{x}" if isinstance(x, str) and x.startswith(('=', '+', '-', '@', '\t', '\r')) else x)
+
 # Convert the dataframe to Excel
 df_unique.to_excel(writer, index=False, sheet_name='Report')
 
