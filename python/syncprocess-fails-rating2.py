@@ -25,7 +25,9 @@ ws = wb.active
 
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
-    ws.append(row.tolist())
+    # Sanitize to prevent CSV/Formula injection
+    sanitized_row = [f"'{val}" if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')) else val for val in row.tolist()]
+    ws.append(sanitized_row)
 
 # Remove the first row that contains "OPERATION_NAME" and "OPERATION_COUNT"
 ws.delete_rows(1)

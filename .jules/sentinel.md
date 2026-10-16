@@ -1,0 +1,4 @@
+## 2024-05-24 - [CSV/Formula Injection in Excel Export Scripts]
+**Vulnerability:** User-controlled string data in Python scripts (`automated_report2.py`, `syncprocess-fails-rating2.py`, `syncprocess-fails-rating8.py`) was directly exported to Excel files without sanitization, leading to potential CSV/Formula Injection if the strings started with special characters like `=`, `+`, `-`, `@`, `\t`, or `\r`.
+**Learning:** Even internal reporting tools are susceptible to injection attacks if they handle untrusted data and export it to formats executed by other applications (like Excel). The `openpyxl` and `pandas` libraries do not automatically sanitize these characters.
+**Prevention:** Always sanitize string data before exporting to CSV/Excel by prepending a single quote (`'`) to values starting with execution characters, forcing them to be treated as plain text. Ensure testing ignores `__pycache__` artifacts.
