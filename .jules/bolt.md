@@ -1,0 +1,3 @@
+## 2024-05-19 - Vectorized iterative operations in Pandas
+**Learning:** Found an `iterrows()` anti-pattern in `python/automated_report2.py` causing an O(N*M) time complexity bottleneck since it was filtering another DataFrame on every iteration instead of joining/grouping.
+**Action:** Always prefer `groupby()` followed by `.map()` or `.merge()` on the index for aligning separate aggregated DataFrames in Pandas, as it provides a vectorized O(N) path and scales well. Also implemented `.replace(0, np.nan)` ahead of division inside `np.where` to handle Pandas/NumPy division by zero warnings silently and safely.
