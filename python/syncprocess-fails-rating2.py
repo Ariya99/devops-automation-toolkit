@@ -16,6 +16,11 @@ merged_df = df_all.merge(df_failed, on="OPERATION_NAME", how="left", suffixes=("
 # Fill missing values in the "OPERATION_COUNT_failed" column with 0
 merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
 
+# Sanitize OPERATION_NAME to prevent CSV/Formula injection
+merged_df['OPERATION_NAME'] = merged_df['OPERATION_NAME'].apply(
+    lambda x: f"'{x}" if isinstance(x, str) and x.startswith(('=', '+', '-', '@', '\t', '\r')) else x
+)
+
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
 

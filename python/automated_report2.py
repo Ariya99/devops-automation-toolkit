@@ -22,6 +22,11 @@ df_concat = pd.concat([df_failed, df_executed, df_all_status])
 # Create a new dataframe with unique operation names
 df_unique = pd.DataFrame({'Operation_Name': df_concat['OPERATION_NAME'].unique()})
 
+# Sanitize Operation_Name to prevent CSV/Formula injection
+df_unique['Operation_Name'] = df_unique['Operation_Name'].apply(
+    lambda x: f"'{x}" if isinstance(x, str) and x.startswith(('=', '+', '-', '@', '\t', '\r')) else x
+)
+
 # Prompt the user to input the output Excel file name
 output_filename = input("Enter the output Excel file name: ")
 output_filename = 'SyncHealth_Report_' + output_filename + '.xlsx'
