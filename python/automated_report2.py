@@ -32,6 +32,8 @@ df_unique['All_Status_Count'] = 0
 df_unique['Failed_Count'] = 0
 df_unique['Failing_Rate'] = 0.0
 
+print(f"\nGenerating report for {len(df_unique)} unique operations, please wait...")
+
 # Iterate over each operation name
 for index, row in df_unique.iterrows():
     operation_name = row['Operation_Name']
@@ -87,3 +89,5 @@ for cell in worksheet[cell_range]:
 
 # Save the workbook
 workbook.save(output_filename)
+
+print(f"\n✨ Success: Report generated and saved as '{output_filename}'")
