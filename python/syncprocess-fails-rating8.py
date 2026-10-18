@@ -35,6 +35,18 @@ merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
 
+
+# Sanitize string data to prevent CSV/Formula Injection
+def sanitize_for_excel(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
+
+for col in merged_df.columns:
+    if merged_df[col].dtype == 'object':
+        merged_df[col] = merged_df[col].apply(sanitize_for_excel)
+
 # Get the date input from the user
 date_input = input("Enter the date (e.g., 2oct_10oct): ")
 
