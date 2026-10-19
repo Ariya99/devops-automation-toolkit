@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from openpyxl.styles import PatternFill
 
 # Prompt the user to input the file names for failed, executed, and all status CSV files
@@ -32,25 +33,24 @@ df_unique['All_Status_Count'] = 0
 df_unique['Failed_Count'] = 0
 df_unique['Failing_Rate'] = 0.0
 
-# Iterate over each operation name
-for index, row in df_unique.iterrows():
-    operation_name = row['Operation_Name']
-    
-    # Find the executed count for the operation name in the executed file
-    executed_count = df_executed[df_executed['OPERATION_NAME'] == operation_name]['OPERATION_COUNT'].sum()
-    
-    # Update the corresponding column in the dataframe
-    df_unique.loc[index, 'Executed_Count'] = executed_count
-    
-    # Find all status count, failed count, and failing rate for the operation name
-    all_status_count = df_all_status[df_all_status['OPERATION_NAME'] == operation_name]['OPERATION_COUNT'].sum()
-    failed_count = df_failed[df_failed['OPERATION_NAME'] == operation_name]['OPERATION_COUNT'].sum()
-    failing_rate = (failed_count / all_status_count) * 100 if all_status_count != 0 else 0
-    
-    # Update the corresponding columns in the dataframe
-    df_unique.loc[index, 'All_Status_Count'] = all_status_count
-    df_unique.loc[index, 'Failed_Count'] = failed_count
-    df_unique.loc[index, 'Failing_Rate'] = failing_rate
+# ⚡ Bolt Optimization: Vectorized Pandas Operations
+# Replaced O(n*m) iterrows loop with O(n) groupby and map operations
+# This is drastically faster for large datasets.
+exec_grp = df_executed.groupby('OPERATION_NAME')['OPERATION_COUNT'].sum()
+all_grp = df_all_status.groupby('OPERATION_NAME')['OPERATION_COUNT'].sum()
+fail_grp = df_failed.groupby('OPERATION_NAME')['OPERATION_COUNT'].sum()
+
+df_unique['Executed_Count'] = df_unique['Operation_Name'].map(exec_grp).fillna(0)
+df_unique['All_Status_Count'] = df_unique['Operation_Name'].map(all_grp).fillna(0)
+df_unique['Failed_Count'] = df_unique['Operation_Name'].map(fail_grp).fillna(0)
+
+# Vectorized failing rate calculation handling division by zero
+denom = df_unique['All_Status_Count'].replace(0, np.nan)
+df_unique['Failing_Rate'] = np.where(
+    df_unique['All_Status_Count'] != 0,
+    (df_unique['Failed_Count'] / denom) * 100,
+    0.0
+)
 
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
