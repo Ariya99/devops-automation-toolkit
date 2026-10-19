@@ -1,0 +1,3 @@
+## 2024-03-20 - Adding Progress Indicators to CLI Scripts
+**Learning:** Python CLI utility scripts that process data often suffer from a lack of visual feedback, leaving users wondering if the script has stalled during operations like reading large CSVs or performing complex calculations. This is a common pattern in the automation toolkit.
+**Action:** When working on CLI scripts, especially those handling file I/O or data processing, ensure clear `print` statements are added to denote the start of major phases and a definitive success notification at the end. This bridges the gap between web UI loading states and CLI user experience.
