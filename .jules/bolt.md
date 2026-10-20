@@ -1,0 +1,3 @@
+## 2024-05-14 - Vectorized Pandas Operations over iterrows()
+**Learning:** In Pandas, iterating over DataFrames using `iterrows()` is an O(n^2) operation because it generates a series for every row, resulting in high overhead. The `automated_report2.py` script uses `iterrows()` along with boolean indexing `df[df['col'] == val]` inside the loop, leading to highly inefficient O(n^2) or worse time complexity.
+**Action:** Replace `iterrows()` and boolean indexing with vectorized operations like `.map()` combined with `groupby().sum()`. This reduces time complexity to O(n) and avoids generating temporary Series, significantly accelerating data manipulation for large CSV files.
