@@ -38,6 +38,15 @@ merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_
 # Get the date input from the user
 date_input = input("Enter the date (e.g., 2oct_10oct): ")
 
+# Sanitize strings to prevent Formula/CSV Injection
+def sanitize_for_excel(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
+for col in merged_df.select_dtypes(include=['object', 'str']).columns:
+    merged_df[col] = merged_df[col].apply(sanitize_for_excel)
+
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
 ws = wb.active
