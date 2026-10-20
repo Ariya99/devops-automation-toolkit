@@ -11,11 +11,13 @@ failed_filename = failed_filename if failed_filename.lower().endswith('.csv') el
 executed_filename = executed_filename if executed_filename.lower().endswith('.csv') else executed_filename + '.csv'
 all_status_filename = all_status_filename if all_status_filename.lower().endswith('.csv') else all_status_filename + '.csv'
 
+print("\nReading CSV files...")
 # Read the csv files and store them in dataframes
 df_failed = pd.read_csv(failed_filename)
 df_executed = pd.read_csv(executed_filename)
 df_all_status = pd.read_csv(all_status_filename)
 
+print("Processing data...")
 # Concatenate the dataframes vertically
 df_concat = pd.concat([df_failed, df_executed, df_all_status])
 
@@ -52,6 +54,7 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
 
+print(f"Generating Excel report: {output_filename}...")
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
 
@@ -87,3 +90,5 @@ for cell in worksheet[cell_range]:
 
 # Save the workbook
 workbook.save(output_filename)
+
+print(f"\n✅ Success! Report saved as {output_filename}")
