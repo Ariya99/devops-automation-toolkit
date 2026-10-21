@@ -52,6 +52,9 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
 
+# Sanitize Operation_Name to prevent Formula/CSV Injection
+df_unique['Operation_Name'] = df_unique['Operation_Name'].apply(lambda x: "'" + str(x) if isinstance(x, str) and str(x).startswith(('=', '+', '-', '@', '\t', '\r')) else x)
+
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
 
