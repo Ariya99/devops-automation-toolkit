@@ -12,6 +12,7 @@ executed_filename = executed_filename if executed_filename.lower().endswith('.cs
 all_status_filename = all_status_filename if all_status_filename.lower().endswith('.csv') else all_status_filename + '.csv'
 
 # Read the csv files and store them in dataframes
+print("\nReading CSV files...")
 df_failed = pd.read_csv(failed_filename)
 df_executed = pd.read_csv(executed_filename)
 df_all_status = pd.read_csv(all_status_filename)
@@ -33,6 +34,7 @@ df_unique['Failed_Count'] = 0
 df_unique['Failing_Rate'] = 0.0
 
 # Iterate over each operation name
+print(f"\nProcessing data for {len(df_unique)} unique operations...")
 for index, row in df_unique.iterrows():
     operation_name = row['Operation_Name']
     
@@ -53,6 +55,7 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
 
 # Create the Excel writer object
+print("\nApplying conditional formatting and saving to Excel...")
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
 
 # Convert the dataframe to Excel
@@ -87,3 +90,4 @@ for cell in worksheet[cell_range]:
 
 # Save the workbook
 workbook.save(output_filename)
+print(f"\n✅ Success! Report generated and saved as: {output_filename}")
