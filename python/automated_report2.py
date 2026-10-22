@@ -1,6 +1,11 @@
 import pandas as pd
 from openpyxl.styles import PatternFill
 
+def sanitize_formula(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
 # Prompt the user to input the file names for failed, executed, and all status CSV files
 failed_filename = input("Enter the name of the failed operations CSV file: ")
 executed_filename = input("Enter the name of the executed operations CSV file: ")
@@ -54,6 +59,10 @@ for index, row in df_unique.iterrows():
 
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
+
+# Sanitize string columns to prevent Formula Injection
+for col in df_unique.select_dtypes(include=['object', 'str']).columns:
+    df_unique[col] = df_unique[col].apply(sanitize_formula)
 
 # Convert the dataframe to Excel
 df_unique.to_excel(writer, index=False, sheet_name='Report')
