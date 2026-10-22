@@ -3,6 +3,11 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
 
+def sanitize_formula(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
     return filename.lower().endswith(".csv")
@@ -34,6 +39,10 @@ merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
 
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
+
+# Sanitize string columns to prevent Formula Injection
+for col in merged_df.select_dtypes(include=['object', 'str']).columns:
+    merged_df[col] = merged_df[col].apply(sanitize_formula)
 
 # Get the date input from the user
 date_input = input("Enter the date (e.g., 2oct_10oct): ")
