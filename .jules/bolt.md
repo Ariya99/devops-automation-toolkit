@@ -1,0 +1,3 @@
+## 2025-02-28 - Replacing iterative Boolean Indexing with Vectorized GroupBy in Pandas
+**Learning:** In Pandas, iterating through a DataFrame via `iterrows()` to perform boolean indexing inside the loop (`df[df['Col'] == val]`) creates an $O(N \cdot M)$ operation, which becomes a severe performance bottleneck.
+**Action:** Replace nested iterative lookups with vectorized aggregations (`groupby().sum()`) and mapping (`map()`), changing the complexity to $O(N + M)$ and leveraging optimized C implementations. Use `np.where` for safe vectorized division.
