@@ -48,7 +48,9 @@ ws.append(header)
 
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
-    ws.append(row.tolist())
+    # Sanitize string data to prevent Formula/CSV Injection
+    sanitized_row = [f"'{x}" if isinstance(x, str) and x.startswith(('=', '+', '-', '@', '\t', '\r')) else x for x in row.tolist()]
+    ws.append(sanitized_row)
 
 # Apply conditional formatting based on the "Failure Percentage" column
 for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=4, max_col=4):  # 4 corresponds to the "Failure Percentage" column
