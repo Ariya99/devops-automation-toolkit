@@ -1,6 +1,11 @@
 import pandas as pd
 from openpyxl.styles import PatternFill
 
+def sanitize_excel_data(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return f"'{val}"
+    return val
+
 # Prompt the user to input the file names for failed, executed, and all status CSV files
 failed_filename = input("Enter the name of the failed operations CSV file: ")
 executed_filename = input("Enter the name of the executed operations CSV file: ")
@@ -51,6 +56,10 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'All_Status_Count'] = all_status_count
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
+
+str_cols = df_unique.select_dtypes(include=['object', 'string']).columns
+for col in str_cols:
+    df_unique[col] = df_unique[col].apply(sanitize_excel_data)
 
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
