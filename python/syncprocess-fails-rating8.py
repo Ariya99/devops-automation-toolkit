@@ -3,6 +3,11 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
 
+def sanitize_excel_data(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return f"'{val}"
+    return val
+
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
     return filename.lower().endswith(".csv")
@@ -37,6 +42,10 @@ merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_
 
 # Get the date input from the user
 date_input = input("Enter the date (e.g., 2oct_10oct): ")
+
+str_cols = merged_df.select_dtypes(include=['object', 'string']).columns
+for col in str_cols:
+    merged_df[col] = merged_df[col].apply(sanitize_excel_data)
 
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
