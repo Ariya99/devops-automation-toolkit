@@ -12,6 +12,7 @@ executed_filename = executed_filename if executed_filename.lower().endswith('.cs
 all_status_filename = all_status_filename if all_status_filename.lower().endswith('.csv') else all_status_filename + '.csv'
 
 # Read the csv files and store them in dataframes
+print("Loading CSV files...")
 df_failed = pd.read_csv(failed_filename)
 df_executed = pd.read_csv(executed_filename)
 df_all_status = pd.read_csv(all_status_filename)
@@ -27,6 +28,7 @@ output_filename = input("Enter the output Excel file name: ")
 output_filename = 'SyncHealth_Report_' + output_filename + '.xlsx'
 
 # Initialize columns for executed counts, all status counts, failed counts, and failing rate
+print("Processing data...")
 df_unique['Executed_Count'] = 0
 df_unique['All_Status_Count'] = 0
 df_unique['Failed_Count'] = 0
@@ -87,3 +89,4 @@ for cell in worksheet[cell_range]:
 
 # Save the workbook
 workbook.save(output_filename)
+print(f"\nReport successfully generated and saved to {output_filename}")
