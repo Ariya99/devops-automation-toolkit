@@ -19,6 +19,15 @@ merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
 
+# Security enhancement: Prevent Formula/CSV Injection by sanitizing string data before Excel export
+def sanitize_for_excel(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
+for col in merged_df.columns:
+    merged_df[col] = merged_df[col].map(sanitize_for_excel)
+
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
 ws = wb.active
