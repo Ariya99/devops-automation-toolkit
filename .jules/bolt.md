@@ -1,0 +1,3 @@
+## 2024-10-25 - Pandas Vectorization
+**Learning:** Iterating over Pandas DataFrames using `iterrows()` combined with dataframe slicing in each iteration causes severe O(N^2) bottlenecks when working with operations reports.
+**Action:** Always prefer vectorized operations like `groupby().sum()`, `merge()`, and `np.where()` over `iterrows()` for data aggregations and transformations, ensuring missing values and division by zero are handled correctly to preserve stability while achieving O(1) time complexity scaling.
