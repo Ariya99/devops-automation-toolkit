@@ -1,0 +1,3 @@
+## 2024-05-14 - Grouping Inputs and Status Updates in CLI Scripts
+**Learning:** Grouping user inputs (`input()`) at the start of a CLI script prevents the script from blocking midway through execution, improving the user experience during long-running tasks. Additionally, printing clear status updates (e.g., progress indicators and success notifications) provides immediate interaction feedback and makes the script more pleasant to use.
+**Action:** Always group user inputs at the beginning of CLI scripts and ensure status updates are printed at logical execution stages to provide ongoing feedback to the user.
