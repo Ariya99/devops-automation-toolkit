@@ -24,6 +24,8 @@ df_unique = pd.DataFrame({'Operation_Name': df_concat['OPERATION_NAME'].unique()
 
 # Prompt the user to input the output Excel file name
 output_filename = input("Enter the output Excel file name: ")
+# Prevent path traversal by stripping directory traversal characters
+output_filename = output_filename.replace('../', '').replace('..\\', '').replace('/', '').replace('\\', '')
 output_filename = 'SyncHealth_Report_' + output_filename + '.xlsx'
 
 # Initialize columns for executed counts, all status counts, failed counts, and failing rate
@@ -51,6 +53,12 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'All_Status_Count'] = all_status_count
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
+
+# Sanitize string data to prevent Formula/CSV Injection
+for col in df_unique.select_dtypes(include=['object', 'string']).columns:
+    df_unique[col] = df_unique[col].apply(
+        lambda x: f"'{x}" if isinstance(x, str) and x.startswith(('=', '+', '-', '@', '\t', '\r')) else x
+    )
 
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
