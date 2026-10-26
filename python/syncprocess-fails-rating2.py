@@ -2,9 +2,16 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 
-# File paths for the two CSV files
-failed_file = "Report-2oct_10oct-Failed.csv"
-all_operations_file = "Report-2oct_10oct-all_operations_status.csv"
+# File paths for the CSV files
+failed_file = input("Enter the name of the failed operations CSV file: ")
+all_operations_file = input("Enter the name of the all status operations CSV file: ")
+output_file = input("Enter the output Excel file name: ")
+
+failed_file = failed_file if failed_file.lower().endswith('.csv') else failed_file + '.csv'
+all_operations_file = all_operations_file if all_operations_file.lower().endswith('.csv') else all_operations_file + '.csv'
+output_file = output_file if output_file.lower().endswith('.xlsx') else output_file + '.xlsx'
+
+print("Reading data...")
 
 # Read the data from the CSV files
 df_failed = pd.read_csv(failed_file, delimiter=',')
@@ -42,6 +49,7 @@ for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=3, max_col=3):
         cell.fill = fill
 
 # Save the Excel workbook with the provided file name
-output_file = "Syncprocess_health_report_edited.xlsx"
+print(f"Saving to {output_file}...")
 wb.save(output_file)
+print("Done.")
 
