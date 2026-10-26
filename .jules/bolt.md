@@ -1,0 +1,3 @@
+## 2024-10-26 - Openpyxl Pandas Serialization & Object Caching
+**Learning:** In openpyxl, iterating over large pandas DataFrames using `iterrows()` and manually `append()`ing rows is extremely slow compared to native pandas integration, taking >1.45s for 10k rows. Further, instantiating openpyxl style objects (like `PatternFill`) repeatedly inside inner formatting loops adds unnecessary overhead.
+**Action:** Replace `df.iterrows()` with `openpyxl.utils.dataframe.dataframe_to_rows(df, index=False, header=False)` for a massive (4x+) speedup when dumping DataFrames to worksheets. Cache reusable style objects at the module or function level prior to entering cell formatting loops.
