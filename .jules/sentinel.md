@@ -1,0 +1,4 @@
+## 2023-10-26 - [Formula Injection in Pandas to Excel Exports]
+**Vulnerability:** When processing CSVs and generating Excel reports, untrusted data (like operation names) from the CSVs was being written directly into an Excel file. If an attacker inputs data beginning with `=, +, -, @`, the resulting spreadsheet could execute arbitrary system commands when opened (CSV/Formula Injection).
+**Learning:** `pandas.to_excel()` and `openpyxl` do not automatically sanitize string data to prevent formula execution. This allows malicious payloads embedded in source data to bypass application constraints and trigger Code Execution upon human interaction with the generated `.xlsx` file.
+**Prevention:** Always sanitize dataframes containing untrusted string input prior to exporting them to spreadsheet formats by prepending a single quote (`'`) to values that start with executable characters (`=`, `+`, `-`, `@`, `\t`, `\r`).
