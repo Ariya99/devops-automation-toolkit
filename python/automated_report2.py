@@ -52,11 +52,18 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
 
+def sanitize_formula(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
 
-# Convert the dataframe to Excel
-df_unique.to_excel(writer, index=False, sheet_name='Report')
+# Convert the dataframe to Excel (with formula injection sanitization)
+# Security: Prevents execution of malicious payloads in Excel
+sanitized_df = df_unique.map(sanitize_formula) if hasattr(df_unique, 'map') else df_unique.applymap(sanitize_formula)
+sanitized_df.to_excel(writer, index=False, sheet_name='Report')
 
 # Get the workbook and worksheet objects
 workbook = writer.book
