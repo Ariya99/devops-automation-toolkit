@@ -2,19 +2,22 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 
-# File paths for the two CSV files
-failed_file = "Report-2oct_10oct-Failed.csv"
-all_operations_file = "Report-2oct_10oct-all_operations_status.csv"
+# Get file paths from user
+failed_file = input("Enter the filename for the 'failed' CSV file: ")
+all_operations_file = input("Enter the filename for the 'all_operations' CSV file: ")
+output_file = input("Enter the output Excel file name: ")
 
 # Read the data from the CSV files
+print("Reading data...")
 df_failed = pd.read_csv(failed_file, delimiter=',')
 df_all = pd.read_csv(all_operations_file, delimiter=',')
 
+print("Processing data...")
 # Merge the dataframes based on the "OPERATION_NAME" column
 merged_df = df_all.merge(df_failed, on="OPERATION_NAME", how="left", suffixes=("_all", "_failed"))
 
 # Fill missing values in the "OPERATION_COUNT_failed" column with 0
-merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
+merged_df["OPERATION_COUNT_failed"] = merged_df["OPERATION_COUNT_failed"].fillna(0)
 
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
@@ -42,6 +45,6 @@ for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=3, max_col=3):
         cell.fill = fill
 
 # Save the Excel workbook with the provided file name
-output_file = "Syncprocess_health_report_edited.xlsx"
 wb.save(output_file)
+print(f"Successfully saved {output_file}")
 
