@@ -1,6 +1,6 @@
 import pandas as pd
 from openpyxl import Workbook
-from openpyxl.styles import PatternFill
+from excel_utils import apply_failure_rate_formatting
 
 # File paths for the two CSV files
 failed_file = "Report-2oct_10oct-Failed.csv"
@@ -33,13 +33,7 @@ ws.delete_rows(1)
 # Apply conditional formatting based on the "Failure Percentage" column
 for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=3, max_col=3):
     for cell in row:
-        percentage = cell.value
-        fill = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")  # Green
-        if percentage > 10 and percentage <= 33:
-            fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")  # Orange
-        elif percentage > 33:
-            fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Red
-        cell.fill = fill
+        apply_failure_rate_formatting(cell)
 
 # Save the Excel workbook with the provided file name
 output_file = "Syncprocess_health_report_edited.xlsx"
