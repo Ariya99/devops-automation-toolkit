@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from openpyxl.styles import PatternFill
 
@@ -24,6 +25,7 @@ df_unique = pd.DataFrame({'Operation_Name': df_concat['OPERATION_NAME'].unique()
 
 # Prompt the user to input the output Excel file name
 output_filename = input("Enter the output Excel file name: ")
+output_filename = os.path.basename(output_filename)  # Prevent Path Traversal
 output_filename = 'SyncHealth_Report_' + output_filename + '.xlsx'
 
 # Initialize columns for executed counts, all status counts, failed counts, and failing rate
