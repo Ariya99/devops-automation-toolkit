@@ -1,6 +1,6 @@
 import pandas as pd
 from openpyxl import Workbook
-from openpyxl.styles import PatternFill
+from excel_utils import get_failure_rate_fill
 import os
 
 def is_valid_csv_filename(filename):
@@ -54,12 +54,7 @@ for r_idx, row in merged_df.iterrows():
 for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=4, max_col=4):  # 4 corresponds to the "Failure Percentage" column
     for cell in row:
         percentage = cell.value
-        fill = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")  # Green
-        if percentage > 10 and percentage <= 33:
-            fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")  # Orange
-        elif percentage > 33:
-            fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Red
-        cell.fill = fill
+        cell.fill = get_failure_rate_fill(percentage)
 
 # Save the Excel workbook with the provided file name including the date
 output_file = f"Syncprocess_health_report_{date_input}.xlsx"

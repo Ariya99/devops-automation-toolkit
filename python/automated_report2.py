@@ -1,5 +1,5 @@
 import pandas as pd
-from openpyxl.styles import PatternFill
+from excel_utils import get_failure_rate_fill
 
 # Prompt the user to input the file names for failed, executed, and all status CSV files
 failed_filename = input("Enter the name of the failed operations CSV file: ")
@@ -62,11 +62,6 @@ df_unique.to_excel(writer, index=False, sheet_name='Report')
 workbook = writer.book
 worksheet = writer.sheets['Report']
 
-# Define the cell fill colors
-red_fill = PatternFill(fill_type='solid', fgColor='FF0000')
-orange_fill = PatternFill(fill_type='solid', fgColor='FFA500')
-green_fill = PatternFill(fill_type='solid', fgColor='00FF00')
-
 # Get the range of cells in the failing rate column
 failing_rate_column = 'E'
 start_row = 2
@@ -78,12 +73,7 @@ for cell in worksheet[cell_range]:
     for c in cell:
         value = c.value
         if value is not None:
-            if value > 33:
-                c.fill = red_fill
-            elif 10 <= value <= 33:
-                c.fill = orange_fill
-            else:
-                c.fill = green_fill
+            c.fill = get_failure_rate_fill(value)
 
 # Save the workbook
 workbook.save(output_filename)
