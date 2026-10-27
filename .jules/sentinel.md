@@ -1,0 +1,4 @@
+## 2024-05-18 - Formula/CSV Injection in Excel Exports
+**Vulnerability:** When saving Pandas DataFrames to Excel (`to_excel` or appending rows to openpyxl), unvalidated user input containing special characters (`=`, `+`, `-`, `@`, `\t`, `\r`) could lead to Formula or CSV injection. This happens if an attacker inputs string content resembling an executable formula.
+**Learning:** Formula/CSV Injection is common when exporting un-sanitized external tabular data (CSV) or user input directly into Excel files via tools like pandas/openpyxl. The library handles raw data generation, but formula evaluation happens dynamically when an end user opens the Excel file.
+**Prevention:** Always sanitize string data being sent to an Excel exporter. We should prepend a single quote (`'`) to string values starting with execution characters. This signals Excel to treat the entry as text, neutralizing the execution risk. Use a centralized `sanitize_for_excel` function via `df.map()`.
