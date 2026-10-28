@@ -1,6 +1,7 @@
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
+from excel_utils import sanitize_for_excel
 
 # File paths for the two CSV files
 failed_file = "Report-2oct_10oct-Failed.csv"
@@ -23,8 +24,9 @@ merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_
 wb = Workbook()
 ws = wb.active
 
-# Write the data to the Excel worksheet
-for r_idx, row in merged_df.iterrows():
+# Sanitize and write the data to the Excel worksheet
+sanitized_df = merged_df.map(sanitize_for_excel)
+for r_idx, row in sanitized_df.iterrows():
     ws.append(row.tolist())
 
 # Remove the first row that contains "OPERATION_NAME" and "OPERATION_COUNT"
