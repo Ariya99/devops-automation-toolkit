@@ -2,6 +2,7 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
+from excel_utils import sanitize_dataframe
 
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
@@ -37,6 +38,9 @@ merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_
 
 # Get the date input from the user
 date_input = input("Enter the date (e.g., 2oct_10oct): ")
+
+# Sanitize dataframe to prevent formula/CSV injection before writing to Excel
+merged_df = sanitize_dataframe(merged_df)
 
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
