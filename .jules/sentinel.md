@@ -1,0 +1,4 @@
+## 2024-05-24 - [Formula and CSV Injection in Pandas DataFrames Exported to Excel]
+**Vulnerability:** Pandas DataFrames built from user inputs (such as input CSVs) that are then exported to Excel formats (.xlsx, .csv) are vulnerable to Formula Injection (CSV Injection) if the values start with execution characters (`=`, `+`, `-`, `@`, `\t`, `\r`) and are opened in software like Microsoft Excel.
+**Learning:** This repo contains several scripts (`automated_report2.py`, `syncprocess-fails-rating2.py`, `syncprocess-fails-rating8.py`) that concatenate or parse potentially untrusted CSV logs and dump the result into an Excel report.
+**Prevention:** Always centralize a sanitization function for pandas strings to prepend a single quote (`'`) to these values prior to calling `.to_excel()` or iterating lines via `openpyxl`. Apply this defense-in-depth sanitization automatically across DataFrames using `.map()` or `.applymap()`.
