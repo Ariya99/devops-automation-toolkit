@@ -1,0 +1,3 @@
+## 2024-05-17 - CLI User Experience Optimization
+**Learning:** In interactive CLI utility scripts, prompting for user input incrementally throughout the script's execution is a poor user experience. It blocks the script midway and forces the user to wait and watch until they are prompted again, which is frustrating during long-running data processing tasks.
+**Action:** Always group all `input()` statements at the very beginning of the script so the user can provide all necessary information upfront. Follow inputs with a clear status message (like "Processing data... Please wait.") and a success notification at the end to provide immediate interaction feedback and let the script run unattended.
