@@ -1,6 +1,7 @@
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
+from openpyxl.utils.dataframe import dataframe_to_rows
 import os
 
 def is_valid_csv_filename(filename):
@@ -47,18 +48,23 @@ header = ["OPERATION_NAME", "OPERATION_COUNT_all", "OPERATION_COUNT_failed", "Fa
 ws.append(header)
 
 # Write the data to the Excel worksheet
-for r_idx, row in merged_df.iterrows():
-    ws.append(row.tolist())
+for r in dataframe_to_rows(merged_df, index=False, header=False):
+    ws.append(r)
+
+# Cache the styles outside the loop for performance
+green_fill = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")
+orange_fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
+red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
 # Apply conditional formatting based on the "Failure Percentage" column
 for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=4, max_col=4):  # 4 corresponds to the "Failure Percentage" column
     for cell in row:
         percentage = cell.value
-        fill = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")  # Green
+        fill = green_fill  # Green
         if percentage > 10 and percentage <= 33:
-            fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")  # Orange
+            fill = orange_fill  # Orange
         elif percentage > 33:
-            fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Red
+            fill = red_fill  # Red
         cell.fill = fill
 
 # Save the Excel workbook with the provided file name including the date
