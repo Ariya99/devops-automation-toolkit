@@ -1,0 +1,3 @@
+## 2023-11-01 - openpyxl dataframe iteration and styling
+**Learning:** Iterating through rows with `iterrows()` to append to openpyxl worksheets and instantiating `PatternFill` style objects directly inside formatting loops creates massive CPU overhead and memory usage due to object creation frequency.
+**Action:** Replace `df.iterrows()` with `openpyxl.utils.dataframe.dataframe_to_rows(df, index=False, header=False)` for bulk Excel appends. Always extract and cache style objects like `PatternFill` at the module level prior to conditional formatting loops to reuse identical references instead of creating new ones per cell.
