@@ -1,6 +1,7 @@
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
+from excel_utils import sanitize_for_excel
 
 # File paths for the two CSV files
 failed_file = "Report-2oct_10oct-Failed.csv"
@@ -22,6 +23,10 @@ merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
 ws = wb.active
+
+str_cols = merged_df.select_dtypes(include=['object', 'string']).columns
+for col in str_cols:
+    merged_df[col] = merged_df[col].map(sanitize_for_excel)
 
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
