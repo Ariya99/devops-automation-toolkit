@@ -1,0 +1,4 @@
+## 2024-05-01 - Prevent Formula/CSV Injection in Excel Exports
+**Vulnerability:** User-provided or unverified CSV data written directly to Excel files without sanitization. Strings starting with `=`, `+`, `-`, or `@` can be executed as formulas, potentially leading to Remote Code Execution (RCE) on the user's machine when they open the generated Excel reports.
+**Learning:** Pandas `to_excel` and openpyxl `append` do not automatically sanitize data for formula injection. This is a common pattern in the codebase's reporting scripts.
+**Prevention:** Always sanitize string inputs before exporting to Excel by prepending a single quote (`'`) to values starting with dangerous characters (`=`, `+`, `-`, `@`, `\t`, `\r`, `\n`). Use a centralized utility function (`python/excel_utils.py`) to apply element-wise sanitization across pandas DataFrames using `df.map()`.
