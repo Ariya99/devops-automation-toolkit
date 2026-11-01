@@ -1,0 +1,7 @@
+venv/
+.jules/
+__pycache__/
+*.pyc
+*.csv
+*.xlsx
+test_*.py

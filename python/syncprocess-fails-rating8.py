@@ -2,6 +2,7 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
+import excel_utils
 
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
@@ -45,6 +46,9 @@ ws = wb.active
 # Add the header row
 header = ["OPERATION_NAME", "OPERATION_COUNT_all", "OPERATION_COUNT_failed", "Failure Percentage"]
 ws.append(header)
+
+# Sanitize dataframe to prevent formula injection
+merged_df = excel_utils.sanitize_dataframe(merged_df)
 
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
