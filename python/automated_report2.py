@@ -52,6 +52,17 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
 
+def sanitize_for_excel(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
+for col in df_unique.select_dtypes(include=['object', 'string']).columns:
+    if hasattr(df_unique[col], 'map'):
+        df_unique[col] = df_unique[col].map(sanitize_for_excel)
+    else:
+        df_unique[col] = df_unique[col].apply(sanitize_for_excel)
+
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
 
