@@ -46,6 +46,17 @@ ws = wb.active
 header = ["OPERATION_NAME", "OPERATION_COUNT_all", "OPERATION_COUNT_failed", "Failure Percentage"]
 ws.append(header)
 
+def sanitize_for_excel(val):
+    if isinstance(val, str) and val.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + val
+    return val
+
+for col in merged_df.select_dtypes(include=['object', 'string']).columns:
+    if hasattr(merged_df[col], 'map'):
+        merged_df[col] = merged_df[col].map(sanitize_for_excel)
+    else:
+        merged_df[col] = merged_df[col].apply(sanitize_for_excel)
+
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
     ws.append(row.tolist())
