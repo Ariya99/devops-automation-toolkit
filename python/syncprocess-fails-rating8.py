@@ -2,6 +2,7 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
@@ -46,20 +47,26 @@ ws = wb.active
 header = ["OPERATION_NAME", "OPERATION_COUNT_all", "OPERATION_COUNT_failed", "Failure Percentage"]
 ws.append(header)
 
-# Write the data to the Excel worksheet
-for r_idx, row in merged_df.iterrows():
-    ws.append(row.tolist())
+# Write the data to the Excel worksheet efficiently using dataframe_to_rows
+# ⚡ Bolt: Replace slow iterrows() with openpyxl's optimized dataframe_to_rows
+for row in dataframe_to_rows(merged_df, index=False, header=False):
+    ws.append(row)
+
+# ⚡ Bolt: Cache PatternFill style objects outside loop to reduce memory usage and object creation
+green_fill = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")  # Green
+orange_fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")  # Orange
+red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Red
 
 # Apply conditional formatting based on the "Failure Percentage" column
 for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=4, max_col=4):  # 4 corresponds to the "Failure Percentage" column
     for cell in row:
         percentage = cell.value
-        fill = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")  # Green
-        if percentage > 10 and percentage <= 33:
-            fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")  # Orange
-        elif percentage > 33:
-            fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Red
-        cell.fill = fill
+        if percentage > 33:
+            cell.fill = red_fill
+        elif percentage > 10 and percentage <= 33:
+            cell.fill = orange_fill
+        else:
+            cell.fill = green_fill
 
 # Save the Excel workbook with the provided file name including the date
 output_file = f"Syncprocess_health_report_{date_input}.xlsx"
