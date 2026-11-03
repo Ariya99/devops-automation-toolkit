@@ -1,0 +1,3 @@
+## 2024-05-15 - Openpyxl Data Loading & Styling Anti-Pattern
+**Learning:** The codebase has a recurring performance bottleneck in Excel reporting scripts where pandas DataFrames are appended to openpyxl worksheets using the `iterrows()` anti-pattern, combined with creating new `PatternFill` style objects inside nested loops for every cell. This increases execution time by ~75% and creates significant memory overhead.
+**Action:** Always use `openpyxl.utils.dataframe.dataframe_to_rows(df, index=False, header=False)` for appending DataFrame rows instead of `iterrows()`, and cache openpyxl style objects (like `PatternFill`) at the module or script level outside of styling loops.
