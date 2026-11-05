@@ -1,0 +1,9 @@
+.jules/
+venv/
+__pycache__/
+python/__pycache__/
+*.csv
+*.xlsx
+*.pyc
+test_sanitize.py
+test_script.py
