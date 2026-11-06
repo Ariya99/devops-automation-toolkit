@@ -5,6 +5,8 @@ from openpyxl.styles import PatternFill
 failed_filename = input("Enter the name of the failed operations CSV file: ")
 executed_filename = input("Enter the name of the executed operations CSV file: ")
 all_status_filename = input("Enter the name of the all status operations CSV file: ")
+output_filename = input("Enter the output Excel file name: ")
+print("\nStarting report generation...")
 
 # Check if the file names have .csv or .CSV extension and add if missing
 failed_filename = failed_filename if failed_filename.lower().endswith('.csv') else failed_filename + '.csv'
@@ -22,9 +24,8 @@ df_concat = pd.concat([df_failed, df_executed, df_all_status])
 # Create a new dataframe with unique operation names
 df_unique = pd.DataFrame({'Operation_Name': df_concat['OPERATION_NAME'].unique()})
 
-# Prompt the user to input the output Excel file name
-output_filename = input("Enter the output Excel file name: ")
 output_filename = 'SyncHealth_Report_' + output_filename + '.xlsx'
+print("Calculating operation metrics...")
 
 # Initialize columns for executed counts, all status counts, failed counts, and failing rate
 df_unique['Executed_Count'] = 0
@@ -87,3 +88,4 @@ for cell in worksheet[cell_range]:
 
 # Save the workbook
 workbook.save(output_filename)
+print(f"Report successfully saved to {output_filename}")
