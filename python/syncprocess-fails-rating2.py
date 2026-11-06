@@ -1,6 +1,7 @@
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
+import excel_utils
 
 # File paths for the two CSV files
 failed_file = "Report-2oct_10oct-Failed.csv"
@@ -18,6 +19,9 @@ merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
 
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
+
+# Sanitize dataframe to prevent formula injection
+merged_df = excel_utils.sanitize_dataframe(merged_df)
 
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
