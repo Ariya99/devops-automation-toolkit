@@ -1,5 +1,6 @@
 import pandas as pd
 from openpyxl.styles import PatternFill
+import excel_utils
 
 # Prompt the user to input the file names for failed, executed, and all status CSV files
 failed_filename = input("Enter the name of the failed operations CSV file: ")
@@ -51,6 +52,9 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'All_Status_Count'] = all_status_count
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
+
+# Sanitize dataframe to prevent formula injection
+df_unique = excel_utils.sanitize_dataframe(df_unique)
 
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')

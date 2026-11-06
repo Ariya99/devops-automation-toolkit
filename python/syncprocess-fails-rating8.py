@@ -2,6 +2,7 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
+import excel_utils
 
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
@@ -35,6 +36,9 @@ merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
 
+# Sanitize dataframe to prevent formula injection
+merged_df = excel_utils.sanitize_dataframe(merged_df)
+
 # Get the date input from the user
 date_input = input("Enter the date (e.g., 2oct_10oct): ")
 
@@ -42,9 +46,10 @@ date_input = input("Enter the date (e.g., 2oct_10oct): ")
 wb = Workbook()
 ws = wb.active
 
-# Add the header row
+# Add the header row and sanitize values
 header = ["OPERATION_NAME", "OPERATION_COUNT_all", "OPERATION_COUNT_failed", "Failure Percentage"]
-ws.append(header)
+sanitized_header = [excel_utils.sanitize_for_excel(col) for col in header]
+ws.append(sanitized_header)
 
 # Write the data to the Excel worksheet
 for r_idx, row in merged_df.iterrows():
