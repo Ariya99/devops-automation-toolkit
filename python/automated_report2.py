@@ -52,6 +52,14 @@ for index, row in df_unique.iterrows():
     df_unique.loc[index, 'Failed_Count'] = failed_count
     df_unique.loc[index, 'Failing_Rate'] = failing_rate
 
+def sanitize_for_excel(value):
+    if isinstance(value, str) and value.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + value
+    return value
+
+df_unique = df_unique.map(sanitize_for_excel)
+df_unique = df_unique.rename(columns=lambda x: sanitize_for_excel(x) if isinstance(x, str) else x)
+
 # Create the Excel writer object
 writer = pd.ExcelWriter(output_filename, engine='openpyxl')
 
