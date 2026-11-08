@@ -1,0 +1,3 @@
+## 2024-11-08 - Pandas Iterrows and DataFrame Mapping Performance
+**Learning:** Iterating over Pandas DataFrames using `iterrows()` to perform conditional aggregation via boolean masking (e.g., `df[df['col'] == val]['col2'].sum()`) results in O(n^2) performance and is extremely inefficient for larger datasets.
+**Action:** Replace `iterrows()` and boolean masking with vectorized pre-aggregations using `groupby().sum()` and mapping results back via `df['col'].map(series)`, improving performance by >49x in standard data reporting tasks. Also cache `PatternFill` objects to avoid O(n) object instantiations when iterating cell rows.
