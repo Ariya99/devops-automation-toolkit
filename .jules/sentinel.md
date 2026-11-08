@@ -1,0 +1,4 @@
+## 2024-11-08 - Excel Formula Injection via CSV Import
+**Vulnerability:** The data reporting scripts (`python/automated_report2.py`, `python/syncprocess-fails-rating2.py`, `python/syncprocess-fails-rating8.py`) read data from unsanitized CSV files and export them directly to Excel workbooks using pandas and openpyxl, creating a Formula Injection (CSV Injection) vulnerability where malicious cell values (starting with `=`, `+`, `-`, `@`, `\t`, `\r`) can execute arbitrary commands when the Excel file is opened.
+**Learning:** Pandas dataframes and openpyxl worksheets do not automatically sanitize string data when exporting to Excel, meaning untrusted inputs from upstream CSV reports require explicit sanitization prior to formatting and writing.
+**Prevention:** Always sanitize DataFrame headers and string values (prepending a single quote `'`) using a centralized utility function (`excel_utils.py`) before invoking `to_excel` or appending to an openpyxl worksheet.
