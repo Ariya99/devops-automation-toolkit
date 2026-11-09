@@ -22,6 +22,11 @@ while True:
     else:
         print("Invalid filename. Please provide a valid .csv file.")
 
+# Get the date input from the user
+date_input = input("Enter the date (e.g., 2oct_10oct): ")
+
+print("Processing data...")
+
 # Read the data from the CSV files
 df_failed = pd.read_csv(failed_file, delimiter=',')
 df_all = pd.read_csv(all_operations_file, delimiter=',')
@@ -35,8 +40,7 @@ merged_df["OPERATION_COUNT_failed"].fillna(0, inplace=True)
 # Calculate the percentage of failing for each operation
 merged_df["Failure Percentage"] = (merged_df["OPERATION_COUNT_failed"] / merged_df["OPERATION_COUNT_all"]) * 100
 
-# Get the date input from the user
-date_input = input("Enter the date (e.g., 2oct_10oct): ")
+print("Generating Excel report...")
 
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
