@@ -1,6 +1,7 @@
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
+from excel_utils import sanitize_dataframe_for_excel
 
 # File paths for the two CSV files
 failed_file = "Report-2oct_10oct-Failed.csv"
@@ -24,6 +25,7 @@ wb = Workbook()
 ws = wb.active
 
 # Write the data to the Excel worksheet
+merged_df = sanitize_dataframe_for_excel(merged_df)
 for r_idx, row in merged_df.iterrows():
     ws.append(row.tolist())
 
