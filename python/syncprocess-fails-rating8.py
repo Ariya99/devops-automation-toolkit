@@ -2,6 +2,7 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 import os
+from excel_utils import sanitize_dataframe
 
 def is_valid_csv_filename(filename):
     # Check if the filename ends with .csv (case insensitive)
@@ -41,6 +42,8 @@ date_input = input("Enter the date (e.g., 2oct_10oct): ")
 # Create a new Excel workbook and add a worksheet
 wb = Workbook()
 ws = wb.active
+
+merged_df = sanitize_dataframe(merged_df)
 
 # Add the header row
 header = ["OPERATION_NAME", "OPERATION_COUNT_all", "OPERATION_COUNT_failed", "Failure Percentage"]
