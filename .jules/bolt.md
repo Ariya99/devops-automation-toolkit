@@ -1,0 +1,3 @@
+## 2024-11-10 - Pandas iterrows O(N^2) Performance Bottleneck
+**Learning:** Found a critical O(N^2) performance bottleneck in `python/automated_report2.py` where pandas `.iterrows()` was used to iterate over rows. Inside the loop, it performed boolean masking (e.g. `df_executed[df_executed['OPERATION_NAME'] == operation_name]['OPERATION_COUNT'].sum()`) for every row. This caused iteration to be exceptionally slow on large datasets (17 seconds for 5000 rows in test vs 0.04s optimized).
+**Action:** When aggregating or matching data in pandas DataFrames, never use `.iterrows()` combined with boolean masking. Always pre-calculate aggregations using `.groupby().sum()` and apply the results using `.map()` to leverage vectorized operations, which achieves O(N) complexity.
