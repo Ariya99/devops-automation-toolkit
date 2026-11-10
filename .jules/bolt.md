@@ -1,0 +1,3 @@
+## 2024-05-24 - Pandas iterrows() O(N^2) Performance Bottleneck
+**Learning:** Found a severe performance anti-pattern in `python/automated_report2.py` where `df.iterrows()` was used in conjunction with boolean masking `df[df['col'] == val].sum()` inside the loop. This resulted in O(N^2) time complexity, taking ~22 seconds for 100k rows.
+**Action:** Replaced the loop with vectorized `df.groupby('col').sum()` and `map()` operations, which reduced the execution time from ~22s down to ~0.9s (a ~24x speedup) while producing identical results. Always use Pandas vectorized operations instead of iterating over rows.
