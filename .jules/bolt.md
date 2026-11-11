@@ -1,0 +1,3 @@
+## 2024-05-15 - Vectorizing Pandas iterrows Anti-Pattern
+**Learning:** Found O(n²) performance bottlenecks where pandas boolean masking inside an `iterrows` loop was used to aggregate data (e.g. `df_executed[df_executed['OPERATION_NAME'] == operation_name]['OPERATION_COUNT'].sum()`). This scales extremely poorly on large dataframes.
+**Action:** Replace `iterrows` with pre-calculated aggregations using `.groupby('OPERATION_NAME')['OPERATION_COUNT'].sum()` and mapping those results back to the unique dataframe using `.map()`, achieving O(n) performance. Always avoid boolean masking loops when `groupby` can be used. Also handle Division by Zero safely with `.replace(0, np.nan)` followed by `.fillna(0)`.
