@@ -1,0 +1,3 @@
+## 2024-05-23 - Pandas and Openpyxl Optmizations
+**Learning:** Pandas data aggregations using `.groupby().sum()` mapped to unique IDs are significantly faster than iterating with `iterrows()` and repeatedly doing boolean masking inside the loop. `openpyxl.utils.dataframe.dataframe_to_rows()` is also significantly faster for writing dataframes to Openpyxl than `.iterrows()`. Openpyxl `PatternFill` styles should be cached and reused instead of recreated for every cell.
+**Action:** Use vectorized `.groupby().sum()`, mapped assignment, and cached `PatternFill` styling for all future spreadsheet generation workloads to improve runtime complexity from O(n²) to O(n). Use `.replace(0, np.nan)` and `.fillna(0)` to do safe vector division without dividing by zero.
